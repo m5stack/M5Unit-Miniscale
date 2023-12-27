@@ -57,6 +57,51 @@ bool UNIT_SCALES::setLEDColor(uint32_t colorHEX) {
     return writeBytes(_addr, UNIT_SCALES_RGB_LED_REG, color, 3);
 }
 
+bool UNIT_SCALES::setLPFilter(uint8_t en) {
+    uint8_t reg = UNIT_SCALES_FILTER_REG;
+
+    return writeBytes(_addr, reg, (uint8_t *)&en, 1);
+}
+
+uint8_t UNIT_SCALES::getLPFilter(void) {
+    uint8_t data;
+    uint8_t reg = UNIT_SCALES_FILTER_REG;
+
+    readBytes(_addr, reg, (uint8_t *)&data, 1);
+
+    return data;
+}
+
+bool UNIT_SCALES::setAvgFilter(uint8_t avg) {
+    uint8_t reg = UNIT_SCALES_FILTER_REG + 1;
+
+    return writeBytes(_addr, reg, (uint8_t *)&avg, 1);
+}
+
+uint8_t UNIT_SCALES::getAvgFilter(void) {
+    uint8_t data;
+    uint8_t reg = UNIT_SCALES_FILTER_REG + 1;
+
+    readBytes(_addr, reg, (uint8_t *)&data, 1);
+
+    return data;
+}
+
+bool UNIT_SCALES::setEmaFilter(uint8_t ema) {
+    uint8_t reg = UNIT_SCALES_FILTER_REG + 2;
+
+    return writeBytes(_addr, reg, (uint8_t *)&ema, 1);
+}
+
+uint8_t UNIT_SCALES::getEmaFilter(void) {
+    uint8_t data;
+    uint8_t reg = UNIT_SCALES_FILTER_REG + 2;
+
+    readBytes(_addr, reg, (uint8_t *)&data, 1);
+
+    return data;
+}
+
 uint32_t UNIT_SCALES::getLEDColor() {
     uint8_t color[4]  = {0};
     uint32_t colorHEX = 0;
@@ -78,6 +123,24 @@ float UNIT_SCALES::getWeight() {
         memcpy(p, data, 4);
     };
     return c;
+}
+
+int32_t UNIT_SCALES::getWeightInt() {
+    uint8_t data[4];
+
+    readBytes(_addr, UNIT_SCALES_CAL_DATA_INT_REG, data, 4);
+    return (data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24));
+}
+
+String UNIT_SCALES::getWeightString() {
+    char *p;
+    uint8_t data[16];
+    String res;
+
+    readBytes(_addr, UNIT_SCALES_CAL_DATA_STRING_REG, data, 16);
+    p   = (char *)data;
+    res = p;
+    return res;
 }
 
 float UNIT_SCALES::getGapValue() {
